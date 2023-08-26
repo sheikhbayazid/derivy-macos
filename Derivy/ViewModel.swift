@@ -6,23 +6,25 @@
 //
 
 import Combine
+import Directory
 import Permissions
 import SwiftUI
 
 final class ViewModel: ObservableObject {
+    private let directory = Directory()
     private let permissions = Permissions()
 
     @Published private(set) var shouldAskForPermission = false
     @Published private(set) var permissionStatus = Status.notDetermined
 
-    private var cancellable: AnyCancellable?
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         listenToPublishers()
     }
 
     func requestFullDiskPermission() {
-        cancellable = permissions.requestFullDiskAccess()
+        permissions.requestFullDiskAccess()
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { _ in
                 // Do Nothing for now.
@@ -33,6 +35,18 @@ final class ViewModel: ObservableObject {
 
                 self.permissionStatus = status
             })
+            .store(in: &cancellables)
+    }
+
+    func deleteDerivedData() {
+        directory.deleteDirectory(at: .test)
+            .receive(on: RunLoop.main)
+            .sink {
+                print($0)
+            } receiveValue: { success in
+                // handle success
+            }
+            .store(in: &cancellables)
     }
 
     private func listenToPublishers() {

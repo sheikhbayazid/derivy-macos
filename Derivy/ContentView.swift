@@ -17,7 +17,7 @@ struct ContentView: View {
             }
 
             Button("Delete derived data") {
-                // Grant access
+                viewModel.deleteDerivedData()
             }
         }
         .padding()

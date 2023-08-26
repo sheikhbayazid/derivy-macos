@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4010937D2A9983FB00654EB5 /* Permissions in Frameworks */ = {isa = PBXBuildFile; productRef = 4010937C2A9983FB00654EB5 /* Permissions */; };
 		4010937F2A998C0300654EB5 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4010937E2A998C0300654EB5 /* ViewModel.swift */; };
+		401093822A99945C00654EB5 /* Directory in Frameworks */ = {isa = PBXBuildFile; productRef = 401093812A99945C00654EB5 /* Directory */; };
 		4016FD272A997F87004B74F4 /* DerivyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4016FD262A997F87004B74F4 /* DerivyApp.swift */; };
 		4016FD292A997F87004B74F4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4016FD282A997F87004B74F4 /* ContentView.swift */; };
 		4016FD2B2A997F89004B74F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4016FD2A2A997F89004B74F4 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 
 /* Begin PBXFileReference section */
 		4010937E2A998C0300654EB5 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		401093802A998EC500654EB5 /* Directory */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Directory; sourceTree = "<group>"; };
 		4016FD232A997F87004B74F4 /* Derivy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Derivy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4016FD262A997F87004B74F4 /* DerivyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivyApp.swift; sourceTree = "<group>"; };
 		4016FD282A997F87004B74F4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -31,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				401093822A99945C00654EB5 /* Directory in Frameworks */,
 				4010937D2A9983FB00654EB5 /* Permissions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,6 +51,7 @@
 		4016FD1A2A997F87004B74F4 = {
 			isa = PBXGroup;
 			children = (
+				401093802A998EC500654EB5 /* Directory */,
 				4016FD352A99814D004B74F4 /* Permissions */,
 				4016FD252A997F87004B74F4 /* Derivy */,
 				4016FD242A997F87004B74F4 /* Products */,
@@ -102,6 +106,7 @@
 			name = Derivy;
 			packageProductDependencies = (
 				4010937C2A9983FB00654EB5 /* Permissions */,
+				401093812A99945C00654EB5 /* Directory */,
 			);
 			productName = Derivy;
 			productReference = 4016FD232A997F87004B74F4 /* Derivy.app */;
@@ -360,6 +365,10 @@
 		4010937C2A9983FB00654EB5 /* Permissions */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Permissions;
+		};
+		401093812A99945C00654EB5 /* Directory */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Directory;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
