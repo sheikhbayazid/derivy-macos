@@ -1,5 +1,5 @@
 //
-//  ViewModel.swift
+//  ContentViewModel.swift
 //  Derivy
 //
 //  Created by Sheikh Bayazid on 26/8/23.
@@ -9,11 +9,13 @@ import Combine
 import Directory
 import SwiftUI
 
-final class ViewModel: ObservableObject {
+final class ContentViewModel: ObservableObject {
     private let directory = Directory()
 
-    @Published private(set) var deleteDerivedDataButtonTitle: String = .deleteDerivedData
+    @Published private(set) var errorMessage: String?
+
     @Published private(set) var isDeriveDataDirectoryExist: Bool
+    @Published private(set) var showIsDeletedDerivedData: Bool = false
 
     private let derivedDataDirectoryPath: DirectoryPath = .derivedData
     private var cancellables = Set<AnyCancellable>()
@@ -31,27 +33,27 @@ final class ViewModel: ObservableObject {
     func deleteDerivedData() {
         directory.deleteDirectory(at: derivedDataDirectoryPath)
             .receive(on: RunLoop.main)
-            .sink { completion in
+            .sink { [weak self] completion in
                 if case .failure = completion {
-                    self.deleteDerivedDataButtonTitle = .derivedDataDoesNotExist
-                    self.setDerivedDataButtonInitialTitle(after: 3)
+                    self?.setErrorMessage(Strings.Text.couldNotDeleteDerivedData)
                 }
             } receiveValue: { [weak self] success in
                 guard let self else {
                     return
                 }
 
-                self.deleteDerivedDataButtonTitle = .deleted
-                self.setDerivedDataButtonInitialTitle(after: 3)
+                self.showIsDeletedDerivedData = true
+                self.removeErrorMessage()
+                self.resetIsDeletedShowDerivedData(after: 5)
             }
             .store(in: &cancellables)
     }
 
     // MARK: - Private -
 
-    private func setDerivedDataButtonInitialTitle(after seconds: Int) {
+    private func resetIsDeletedShowDerivedData(after seconds: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(seconds)) { [weak self] in
-            self?.deleteDerivedDataButtonTitle = .deleteDerivedData
+            self?.showIsDeletedDerivedData = false
         }
     }
 
@@ -76,10 +78,12 @@ final class ViewModel: ObservableObject {
     private func handleXcodeDirectoryUpdate() {
         isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
     }
-}
 
-extension String {
-    static let deleteDerivedData = "Delete Derived Data"
-    static let deleted = "Derived Data has been deleted"
-    static let derivedDataDoesNotExist = "Derived Data not found"
+    private func setErrorMessage(_ message: String) {
+        errorMessage = message
+    }
+
+    private func removeErrorMessage() {
+        errorMessage = nil
+    }
 }
