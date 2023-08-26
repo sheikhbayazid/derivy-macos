@@ -3,9 +3,9 @@ import Foundation
 import PermissionsKit
 
 public enum Status: String {
-    case notDetermined
-    case granted
+    case authorized
     case denied
+    case notDetermined
 }
 
 public final class Permissions {
@@ -36,12 +36,12 @@ public final class Permissions {
             return .init(true)
         }
 
-        return .init(status != .granted)
+        return .init(status != .authorized)
     }
 
     private func saveStatus(_ status: Status) {
         userDefault.set(status.rawValue, forKey: .fullDiskPermissionStatusKey)
-        shouldAskForPermissionSubject.send(status != .granted)
+        shouldAskForPermissionSubject.send(status != .authorized)
     }
 }
 
@@ -57,7 +57,7 @@ extension AuthorizationStatus {
             return .denied
 
         case .authorized:
-            return .granted
+            return .authorized
 
         @unknown default:
             return .denied
