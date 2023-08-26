@@ -11,28 +11,6 @@ struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
 
     var body: some View {
-        VStack {
-            grantPermissionView()
-            deleteDerivedDataView()
-        }
-    }
-
-    @ViewBuilder
-    private func grantPermissionView() -> some View {
-        if viewModel.shouldAskForPermission {
-            Text(verbatim: .fullDiskPermissionDescription)
-
-            Divider()
-
-            Button(
-                String.grantPermission,
-                action: viewModel.requestFullDiskPermission
-            )
-        }
-    }
-
-    @ViewBuilder
-    private func deleteDerivedDataView() -> some View {
         if viewModel.isDeriveDataDirectoryExist {
             Button(
                 viewModel.deleteDerivedDataButtonTitle,

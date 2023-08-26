@@ -5,45 +5,27 @@
 //  Created by Sheikh Bayazid on 26/8/23.
 //
 
-import Authentication
 import Combine
 import Directory
 import SwiftUI
 
 final class ViewModel: ObservableObject {
-    private let authentication = Authentication()
     private let directory = Directory()
-
-    @Published private(set) var shouldAskForPermission = false
-    @Published private(set) var permissionStatus = AuthenticationStatus.notDetermined
 
     @Published private(set) var deleteDerivedDataButtonTitle: String = .deleteDerivedData
     @Published private(set) var isDeriveDataDirectoryExist: Bool
 
-    private let derivedDataDirectoryPath: DirectoryPath = .test
+    private let derivedDataDirectoryPath: DirectoryPath = .derivedData
     private var cancellables = Set<AnyCancellable>()
 
     init() {
         isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
 
-        setupListeners()
+        setupListener()
     }
 
     deinit {
         stopListeners()
-    }
-
-    func requestFullDiskPermission() {
-        authentication.requestFullDiskAccess()
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] status in
-                guard let self else {
-                    return
-                }
-
-                self.permissionStatus = status
-            })
-            .store(in: &cancellables)
     }
 
     func deleteDerivedData() {
@@ -73,11 +55,7 @@ final class ViewModel: ObservableObject {
         }
     }
 
-    private func setupListeners() {
-        authentication.shouldAskForPermission
-            .receive(on: RunLoop.main)
-            .assign(to: &$shouldAskForPermission)
-
+    private func setupListener() {
         directory.startObserving(atPath: .xcode)
             .receive(on: RunLoop.main)
             .sink { completion in
@@ -103,8 +81,5 @@ final class ViewModel: ObservableObject {
 extension String {
     static let deleteDerivedData = "Delete Derived Data"
     static let deleted = "Derived Data has been deleted"
-    static let derivedDataDoesNotExist = "Derived Data does not exist"
-
-    static let fullDiskPermissionDescription = "Please grant full disk permission to access derived data."
-    static let grantPermission = "Grant permission"
+    static let derivedDataDoesNotExist = "Derived Data not found"
 }
