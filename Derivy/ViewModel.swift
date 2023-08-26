@@ -5,17 +5,17 @@
 //  Created by Sheikh Bayazid on 26/8/23.
 //
 
+import Authentication
 import Combine
 import Directory
-import Permissions
 import SwiftUI
 
 final class ViewModel: ObservableObject {
+    private let authentication = Authentication()
     private let directory = Directory()
-    private let permissions = Permissions()
 
     @Published private(set) var shouldAskForPermission = false
-    @Published private(set) var permissionStatus = Status.notDetermined
+    @Published private(set) var permissionStatus = AuthenticationStatus.notDetermined
 
     @Published private(set) var deleteDerivedDataButtonTitle: String = .deleteDerivedData
     @Published private(set) var isDeriveDataDirectoryExists: Bool
@@ -30,7 +30,7 @@ final class ViewModel: ObservableObject {
     }
 
     func requestFullDiskPermission() {
-        permissions.requestFullDiskAccess()
+        authentication.requestFullDiskAccess()
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { _ in
                 // Do Nothing for now.
@@ -72,7 +72,7 @@ final class ViewModel: ObservableObject {
     }
 
     private func setupListeners() {
-        permissions.shouldAskForPermission
+        authentication.shouldAskForPermission
             .receive(on: RunLoop.main)
             .assign(to: &$shouldAskForPermission)
 

@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4010937D2A9983FB00654EB5 /* Permissions in Frameworks */ = {isa = PBXBuildFile; productRef = 4010937C2A9983FB00654EB5 /* Permissions */; };
 		4010937F2A998C0300654EB5 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4010937E2A998C0300654EB5 /* ViewModel.swift */; };
 		401093822A99945C00654EB5 /* Directory in Frameworks */ = {isa = PBXBuildFile; productRef = 401093812A99945C00654EB5 /* Directory */; };
 		4016FD272A997F87004B74F4 /* DerivyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4016FD262A997F87004B74F4 /* DerivyApp.swift */; };
 		4016FD292A997F87004B74F4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4016FD282A997F87004B74F4 /* ContentView.swift */; };
 		4016FD2B2A997F89004B74F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4016FD2A2A997F89004B74F4 /* Assets.xcassets */; };
 		4016FD2E2A997F89004B74F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4016FD2D2A997F89004B74F4 /* Preview Assets.xcassets */; };
+		401CCCCF2A9A967A001F7955 /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 401CCCCE2A9A967A001F7955 /* Authentication */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +25,7 @@
 		4016FD2A2A997F89004B74F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4016FD2D2A997F89004B74F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4016FD2F2A997F89004B74F4 /* Derivy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Derivy.entitlements; sourceTree = "<group>"; };
-		4016FD352A99814D004B74F4 /* Permissions */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Permissions; sourceTree = "<group>"; };
+		40844F532A9A934C00D52E2F /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Authentication; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,8 +33,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				401CCCCF2A9A967A001F7955 /* Authentication in Frameworks */,
 				401093822A99945C00654EB5 /* Directory in Frameworks */,
-				4010937D2A9983FB00654EB5 /* Permissions in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,8 +51,8 @@
 		4016FD1A2A997F87004B74F4 = {
 			isa = PBXGroup;
 			children = (
+				40844F532A9A934C00D52E2F /* Authentication */,
 				401093802A998EC500654EB5 /* Directory */,
-				4016FD352A99814D004B74F4 /* Permissions */,
 				4016FD252A997F87004B74F4 /* Derivy */,
 				4016FD242A997F87004B74F4 /* Products */,
 				4010937B2A9983FB00654EB5 /* Frameworks */,
@@ -105,8 +105,8 @@
 			);
 			name = Derivy;
 			packageProductDependencies = (
-				4010937C2A9983FB00654EB5 /* Permissions */,
 				401093812A99945C00654EB5 /* Directory */,
+				401CCCCE2A9A967A001F7955 /* Authentication */,
 			);
 			productName = Derivy;
 			productReference = 4016FD232A997F87004B74F4 /* Derivy.app */;
@@ -364,13 +364,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4010937C2A9983FB00654EB5 /* Permissions */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Permissions;
-		};
 		401093812A99945C00654EB5 /* Directory */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Directory;
+		};
+		401CCCCE2A9A967A001F7955 /* Authentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Authentication;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
