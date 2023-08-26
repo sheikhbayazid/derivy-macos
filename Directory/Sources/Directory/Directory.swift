@@ -11,19 +11,25 @@ public enum DirectoryError: Error {
 }
 
 public final class Directory {
+    private let fileManager = FileManager.default
+
     public init() { }
+
+    public func fileExists(at directory: DirectoryPath) -> Bool {
+        fileManager.fileExists(atPath: directory.path)
+    }
 
     public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Bool, Error> {
         guard let directoryPath = getUserPathURL(directory)?.path(),
-              FileManager.default.fileExists(atPath: directoryPath) else {
+              fileManager.fileExists(atPath: directoryPath) else {
             return Fail(error: DirectoryError.pathDoesNotExists).eraseToAnyPublisher()
         }
 
         do {
-            try FileManager.default.removeItem(atPath: directoryPath)
+            try fileManager.removeItem(atPath: directoryPath)
             print(
                 "--- DELETED --- : ", directoryPath, "\n",
-                "--- EXISTS --- :", FileManager.default.fileExists(atPath: directoryPath).description.uppercased()
+                "--- EXISTS --- :", fileManager.fileExists(atPath: directoryPath).description.uppercased()
             )
 
             return Just(true)
@@ -36,7 +42,7 @@ public final class Directory {
 
     func getUserPathURL(_ directory: DirectoryPath) -> URL? {
         // Get root user directory
-        guard let libraryDirectory = FileManager.default.urls(for: .userDirectory, in: .localDomainMask).first else {
+        guard let libraryDirectory = fileManager.urls(for: .userDirectory, in: .localDomainMask).first else {
             return nil
         }
 
@@ -46,7 +52,7 @@ public final class Directory {
 
         print(
             "--- FILE --- : ", derivedDataPath.path(), "\n",
-            "--- EXISTS --- :", FileManager.default.fileExists(atPath: derivedDataPath.path()).description.uppercased()
+            "--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path()).description.uppercased()
         )
 
         return derivedDataPath
