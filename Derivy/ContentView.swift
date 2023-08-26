@@ -12,13 +12,14 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Button("Grant Access") {
-                viewModel.requestFullDiskPermission()
+            if viewModel.shouldAskForPermission {
+                Text("Please grant full disk permission in-order to access files.")
+
+                Divider()
+                Button("Grant Access", action: viewModel.requestFullDiskPermission)
             }
 
-            Button("Delete derived data") {
-                viewModel.deleteDerivedData()
-            }
+            Button("Delete derived data", action: viewModel.deleteDerivedData)
         }
         .padding()
     }
