@@ -20,7 +20,7 @@ struct ContentView: View {
             }
 
             Button(viewModel.deleteDerivedDataButtonTitle, action: viewModel.deleteDerivedData)
-                .disabled(!viewModel.isDeriveDataDirectoryExisits)
+                .disabled(!viewModel.isDeriveDataDirectoryExists)
         }
         .padding()
     }

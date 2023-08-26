@@ -17,22 +17,16 @@ final class ViewModel: ObservableObject {
     @Published private(set) var shouldAskForPermission = false
     @Published private(set) var permissionStatus = Status.notDetermined
 
-    @Published var deleteDerivedDataButtonTitle: String = .deleteDerivedData
+    @Published private(set) var deleteDerivedDataButtonTitle: String = .deleteDerivedData
+    @Published private(set) var isDeriveDataDirectoryExists: Bool
 
+    private let derivedDataDirectoryPath: DirectoryPath = .test
     private var cancellables = Set<AnyCancellable>()
 
-    @Published var isDeriveDataDirectoryExisits: Bool
-
-
     init() {
-        isDeriveDataDirectoryExisits = directory.fileExists(at: .test)
+        isDeriveDataDirectoryExists = directory.fileExists(at: derivedDataDirectoryPath)
 
-        listenToPublishers()
-    }
-
-    func handleOnAppear() {
-        isDeriveDataDirectoryExisits = directory.fileExists(at: .test)
-        print("CAAAAAAAAALD")
+        setupListeners()
     }
 
     func requestFullDiskPermission() {
@@ -54,8 +48,8 @@ final class ViewModel: ObservableObject {
         directory.deleteDirectory(at: .test)
             .receive(on: RunLoop.main)
             .sink { completion in
-                if case .failure(_) = completion {
-                    self.deleteDerivedDataButtonTitle = .fileDoesNotExisits
+                if case .failure = completion {
+                    self.deleteDerivedDataButtonTitle = .fileDoesNotExists
                     self.setDerivedDataButtonInitialTitle(after: 3)
                 }
             } receiveValue: { [weak self] success in
@@ -69,27 +63,37 @@ final class ViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    // MARK: - Private -
+
     private func setDerivedDataButtonInitialTitle(after seconds: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(seconds)) { [weak self] in
             self?.deleteDerivedDataButtonTitle = .deleteDerivedData
         }
     }
 
-    private func listenToPublishers() {
+    private func setupListeners() {
         permissions.shouldAskForPermission
             .receive(on: RunLoop.main)
             .assign(to: &$shouldAskForPermission)
 
+        observedXcodePath()
+    }
+
+    private func observedXcodePath() {
         directory.startObserving(directory: .xcode) { [weak self] in
             DispatchQueue.main.async {
-                self?.handleOnAppear()
+                self?.handleXcodeDirectoryUpdate()
             }
         }
+    }
+
+    private func handleXcodeDirectoryUpdate() {
+        isDeriveDataDirectoryExists = directory.fileExists(at: derivedDataDirectoryPath)
     }
 }
 
 extension String {
     static let deleteDerivedData = "Delete derived data"
     static let deleted = "Deleted"
-    static let fileDoesNotExisits = "File does not exists"
+    static let fileDoesNotExists = "File does not exists"
 }
