@@ -1,27 +1,18 @@
+//
+//  Directory.swift
+//  Directory
+//
+//  Created by Sheikh Bayazid on 2023-08-26.
+//
+
 import Combine
 import Foundation
-
-public enum DirectoryPath {
-    case derivedData
-    case xcode
-    case test
-}
-
-public enum DirectoryError: Error {
-    case invalidPath
-    case failToMonitorPath
-}
 
 public final class Directory {
     private let fileManager = FileManager.default
     private var fileMonitor: DispatchSourceFileSystemObject?
 
     public init() { }
-
-    deinit {
-        stopMonitoring()
-        fileMonitor = nil
-    }
 
     public func fileExists(at directory: DirectoryPath) -> Bool {
         guard let directoryPath = directory.directoryPath else {
@@ -62,7 +53,11 @@ public final class Directory {
             return Fail(error: DirectoryError.failToMonitorPath).eraseToAnyPublisher()
         }
 
-        fileMonitor = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: [.write, .delete], queue: DispatchQueue.global())
+        fileMonitor = DispatchSource.makeFileSystemObjectSource(
+            fileDescriptor: fileDescriptor,
+            eventMask: [.write, .delete],
+            queue: DispatchQueue.global()
+        )
 
         fileMonitor?.setEventHandler {
             publisher.send(Void())
@@ -77,44 +72,7 @@ public final class Directory {
         return publisher.eraseToAnyPublisher()
     }
 
-    func stopMonitoring() {
+    public func stopMonitoring() {
         fileMonitor?.cancel()
-    }
-}
-
-private extension DirectoryPath {
-    /// Directory specific path.
-    private var path: String {
-        switch self {
-        case .derivedData:
-            return "Library/Developer/Xcode/DerivedData"
-
-        case .xcode:
-            return "Library/Developer/Xcode"
-
-        case .test:
-            return "Library/Developer/Xcode/Test"
-        }
-    }
-
-    var directoryPath: String? {
-        let fileManager = FileManager.default
-        // Get root user directory
-        guard let libraryDirectory = fileManager.urls(for: .userDirectory, in: .localDomainMask).first else {
-            return nil
-        }
-
-        let username = NSUserName()
-        let derivedDataPath = libraryDirectory
-            .appendingPathComponent("\(username)/\(path)")
-
-        print(
-            "--- PATH --- : ", derivedDataPath.path(),
-            "\n--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path())
-                .description
-                .uppercased()
-        )
-
-        return derivedDataPath.path()
     }
 }
