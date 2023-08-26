@@ -13,7 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         errorMessage()
-        deleteDerivedDataButton()
+        deleteDerivedDataContainer()
         quitButton()
     }
 
@@ -25,17 +25,32 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    private func deleteDerivedDataButton() -> some View {
+    private func deleteDerivedDataContainer() -> some View {
         if viewModel.showIsDeletedDerivedData {
-            Text(verbatim: Strings.Text.derivedDataHasBeenDeleted)
+            derivedDataHasBeenDeletedText()
         } else if viewModel.isDeriveDataDirectoryExist {
-            Button(
-                Strings.Text.deleteDerivedData,
-                action: viewModel.deleteDerivedData
-            )
+            deleteDerivedDataButton()
         } else {
-            Text(verbatim: Strings.Text.derivedDataDoesNotExist)
+            derivedDataDoesNotExistText()
         }
+    }
+
+    @ViewBuilder
+    private func deleteDerivedDataButton() -> some View {
+        Button(
+            Strings.Text.deleteDerivedData,
+            action: viewModel.deleteDerivedData
+        )
+    }
+
+    @ViewBuilder
+    private func derivedDataHasBeenDeletedText() -> some View {
+        Text(verbatim: Strings.Text.derivedDataHasBeenDeleted)
+    }
+
+    @ViewBuilder
+    private func derivedDataDoesNotExistText() -> some View {
+        Text(verbatim: Strings.Text.derivedDataDoesNotExist)
     }
 
     @ViewBuilder
