@@ -19,7 +19,13 @@ public class Authentication {
     public init() { }
 
     public func requestFullDiskAccess() -> AnyPublisher<AuthenticationStatus, Never> {
-        Future { promise in
+        if PermissionsKit.authorizationStatus(for: .fullDiskAccess) == .authorized {
+            return Just(AuthenticationStatus.authorized)
+                .setFailureType(to: Never.self)
+                .eraseToAnyPublisher()
+        }
+
+        return Future { promise in
             PermissionsKit.requestAuthorization(for: .fullDiskAccess) { [weak self] authStatus in
                 let status = authStatus.status
 
