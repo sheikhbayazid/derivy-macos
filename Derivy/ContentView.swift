@@ -12,17 +12,35 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            if viewModel.shouldAskForPermission {
-                Text("Please grant full disk permission in-order to access files.")
-
-                Divider()
-                Button("Grant Access", action: viewModel.requestFullDiskPermission)
-            }
-
-            Button(viewModel.deleteDerivedDataButtonTitle, action: viewModel.deleteDerivedData)
-                .disabled(!viewModel.isDeriveDataDirectoryExists)
+            grantPermissionView()
+            deleteDerivedDataView()
         }
-        .padding()
+    }
+
+    @ViewBuilder
+    private func grantPermissionView() -> some View {
+        if viewModel.shouldAskForPermission {
+            Text(verbatim: .fullDiskPermissionDescription)
+
+            Divider()
+
+            Button(
+                String.grantPermission,
+                action: viewModel.requestFullDiskPermission
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func deleteDerivedDataView() -> some View {
+        if viewModel.isDeriveDataDirectoryExist {
+            Button(
+                viewModel.deleteDerivedDataButtonTitle,
+                action: viewModel.deleteDerivedData
+            )
+        } else {
+            Text(verbatim: .derivedDataDoesNotExist)
+        }
     }
 }
 

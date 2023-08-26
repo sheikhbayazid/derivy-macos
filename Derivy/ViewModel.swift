@@ -18,13 +18,13 @@ final class ViewModel: ObservableObject {
     @Published private(set) var permissionStatus = AuthenticationStatus.notDetermined
 
     @Published private(set) var deleteDerivedDataButtonTitle: String = .deleteDerivedData
-    @Published private(set) var isDeriveDataDirectoryExists: Bool
+    @Published private(set) var isDeriveDataDirectoryExist: Bool
 
     private let derivedDataDirectoryPath: DirectoryPath = .test
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        isDeriveDataDirectoryExists = directory.fileExists(at: derivedDataDirectoryPath)
+        isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
 
         setupListeners()
     }
@@ -51,7 +51,7 @@ final class ViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .sink { completion in
                 if case .failure = completion {
-                    self.deleteDerivedDataButtonTitle = .fileDoesNotExists
+                    self.deleteDerivedDataButtonTitle = .derivedDataDoesNotExist
                     self.setDerivedDataButtonInitialTitle(after: 3)
                 }
             } receiveValue: { [weak self] success in
@@ -88,7 +88,6 @@ final class ViewModel: ObservableObject {
                 self?.handleXcodeDirectoryUpdate()
             }
             .store(in: &cancellables)
-
     }
 
     private func stopListeners() {
@@ -97,12 +96,15 @@ final class ViewModel: ObservableObject {
     }
 
     private func handleXcodeDirectoryUpdate() {
-        isDeriveDataDirectoryExists = directory.fileExists(at: derivedDataDirectoryPath)
+        isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
     }
 }
 
 extension String {
-    static let deleteDerivedData = "Delete derived data"
-    static let deleted = "Deleted"
-    static let fileDoesNotExists = "File does not exists"
+    static let deleteDerivedData = "Delete Derived Data"
+    static let deleted = "Derived Data has been deleted"
+    static let derivedDataDoesNotExist = "Derived Data does not exist"
+
+    static let fullDiskPermissionDescription = "Please grant full disk permission to access derived data."
+    static let grantPermission = "Grant permission"
 }
