@@ -16,7 +16,7 @@ public final class Permissions {
 
     public init() { }
 
-    public func requestFullDiskAccess() -> AnyPublisher<Status, Error> {
+    public func requestFullDiskAccess() -> AnyPublisher<Status, Never> {
         Future { promise in
             PermissionsKit.requestAuthorization(for: .fullDiskAccess) { [weak self] authStatus in
                 let status = authStatus.status

@@ -8,7 +8,8 @@ public enum DirectoryPath {
 }
 
 public enum DirectoryError: Error {
-    case pathDoesNotExists
+    case invalidPath
+    case failToMonitorPath
 }
 
 public final class Directory {
@@ -30,9 +31,8 @@ public final class Directory {
     }
 
     public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Bool, Error> {
-        guard let directoryPath = directory.directoryPath,
-              fileManager.fileExists(atPath: directoryPath) else {
-            return Fail(error: DirectoryError.pathDoesNotExists).eraseToAnyPublisher()
+        guard let directoryPath = directory.directoryPath, fileManager.fileExists(atPath: directoryPath) else {
+            return Fail(error: DirectoryError.invalidPath).eraseToAnyPublisher()
         }
 
         do {
@@ -50,22 +50,22 @@ public final class Directory {
         }
     }
 
-    public func startObserving(directory: DirectoryPath, completion: @escaping () -> Void) {
+    public func startObserving(atPath directory: DirectoryPath) -> AnyPublisher<Void, Error> {
+        let publisher: PassthroughSubject<Void, Error> = .init()
+
         guard let directoryPath = directory.directoryPath else {
-                print("Invalid path")
-                return
+            return Fail(error: DirectoryError.invalidPath).eraseToAnyPublisher()
         }
 
         let fileDescriptor = open(directoryPath, O_EVTONLY)
         guard fileDescriptor != -1 else {
-            print("Error opening directory for monitoring")
-            return
+            return Fail(error: DirectoryError.failToMonitorPath).eraseToAnyPublisher()
         }
 
         fileMonitor = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: [.write, .delete], queue: DispatchQueue.global())
 
         fileMonitor?.setEventHandler {
-            completion()
+            publisher.send(Void())
         }
 
         fileMonitor?.setCancelHandler { [weak self] in
@@ -74,6 +74,7 @@ public final class Directory {
         }
 
         fileMonitor?.resume()
+        return publisher.eraseToAnyPublisher()
     }
 
     func stopMonitoring() {

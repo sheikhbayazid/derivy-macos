@@ -76,15 +76,17 @@ final class ViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: &$shouldAskForPermission)
 
-        observedXcodePath()
-    }
-
-    private func observedXcodePath() {
-        directory.startObserving(directory: .xcode) { [weak self] in
-            DispatchQueue.main.async {
+        directory.startObserving(atPath: .xcode)
+            .receive(on: RunLoop.main)
+            .sink { completion in
+                if case let .failure(error) = completion {
+                    debugPrint(error.localizedDescription)
+                }
+            } receiveValue: { [weak self] in
                 self?.handleXcodeDirectoryUpdate()
             }
-        }
+            .store(in: &cancellables)
+
     }
 
     private func handleXcodeDirectoryUpdate() {
