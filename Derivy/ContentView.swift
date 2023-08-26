@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel = ViewModel()
+
     var body: some View {
         VStack {
             Button("Grant Access") {
-                // Grant access
+                viewModel.requestFullDiskPermission()
             }
 
             Button("Delete derived data") {
