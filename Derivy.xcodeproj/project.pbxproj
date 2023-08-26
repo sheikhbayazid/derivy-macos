@@ -121,6 +121,7 @@
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1420;
+				ORGANIZATIONNAME = "Sheikh Bayazid";
 				TargetAttributes = {
 					4016FD222A997F87004B74F4 = {
 						CreatedOnToolsVersion = 14.2;
