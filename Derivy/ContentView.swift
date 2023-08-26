@@ -19,7 +19,7 @@ struct ContentView: View {
                 Button("Grant Access", action: viewModel.requestFullDiskPermission)
             }
 
-            Button("Delete derived data", action: viewModel.deleteDerivedData)
+            Button(viewModel.deleteDerivedDataButtonTitle, action: viewModel.deleteDerivedData)
         }
         .padding()
     }

@@ -17,6 +17,8 @@ final class ViewModel: ObservableObject {
     @Published private(set) var shouldAskForPermission = false
     @Published private(set) var permissionStatus = Status.notDetermined
 
+    @Published var deleteDerivedDataButtonTitle: String = .deleteDerivedData
+
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -41,12 +43,26 @@ final class ViewModel: ObservableObject {
     func deleteDerivedData() {
         directory.deleteDirectory(at: .test)
             .receive(on: RunLoop.main)
-            .sink {
-                print($0)
-            } receiveValue: { success in
-                // handle success
+            .sink { completion in
+                if case .failure(_) = completion {
+                    self.deleteDerivedDataButtonTitle = .fileDoesNotExisits
+                    self.setDerivedDataButtonInitialTitle(after: 3)
+                }
+            } receiveValue: { [weak self] success in
+                guard let self else {
+                    return
+                }
+
+                self.deleteDerivedDataButtonTitle = .deleted
+                self.setDerivedDataButtonInitialTitle(after: 3)
             }
             .store(in: &cancellables)
+    }
+
+    private func setDerivedDataButtonInitialTitle(after seconds: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(seconds)) { [weak self] in
+            self?.deleteDerivedDataButtonTitle = .deleteDerivedData
+        }
     }
 
     private func listenToPublishers() {
@@ -54,4 +70,10 @@ final class ViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: &$shouldAskForPermission)
     }
+}
+
+extension String {
+    static let deleteDerivedData = "Delete derived data"
+    static let deleted = "Deleted"
+    static let fileDoesNotExisits = "File does not exists"
 }
