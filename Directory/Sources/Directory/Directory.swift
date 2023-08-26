@@ -17,24 +17,29 @@ public final class Directory {
 
     public init() { }
 
+    deinit {
+        stopMonitoring()
+        fileMonitor = nil
+    }
+
     public func fileExists(at directory: DirectoryPath) -> Bool {
-        guard let directoryPath = getUserPathURL(directory)?.path() else {
+        guard let directoryPath = directory.directoryPath else {
             return false
         }
         return fileManager.fileExists(atPath: directoryPath)
     }
 
     public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Bool, Error> {
-        guard let userDirectoryPath = getUserPathURL(directory)?.path(),
-              fileManager.fileExists(atPath: userDirectoryPath) else {
+        guard let directoryPath = directory.directoryPath,
+              fileManager.fileExists(atPath: directoryPath) else {
             return Fail(error: DirectoryError.pathDoesNotExists).eraseToAnyPublisher()
         }
 
         do {
-            try fileManager.removeItem(atPath: userDirectoryPath)
+            try fileManager.removeItem(atPath: directoryPath)
             print(
-                "--- DELETED --- : ", userDirectoryPath, "\n",
-                "--- EXISTS --- :", fileManager.fileExists(atPath: userDirectoryPath).description.uppercased()
+                "--- DELETED --- : ", directoryPath,
+                "\n--- EXISTS --- :", fileManager.fileExists(atPath: directoryPath).description.uppercased()
             )
 
             return Just(true)
@@ -46,12 +51,12 @@ public final class Directory {
     }
 
     public func startObserving(directory: DirectoryPath, completion: @escaping () -> Void) {
-        guard let userDirectoryPath = getUserPathURL(directory)?.path() else {
+        guard let directoryPath = directory.directoryPath else {
                 print("Invalid path")
                 return
         }
 
-        let fileDescriptor = open(userDirectoryPath, O_EVTONLY)
+        let fileDescriptor = open(directoryPath, O_EVTONLY)
         guard fileDescriptor != -1 else {
             print("Error opening directory for monitoring")
             return
@@ -74,28 +79,11 @@ public final class Directory {
     func stopMonitoring() {
         fileMonitor?.cancel()
     }
-
-    private func getUserPathURL(_ directory: DirectoryPath) -> URL? {
-        // Get root user directory
-        guard let libraryDirectory = fileManager.urls(for: .userDirectory, in: .localDomainMask).first else {
-            return nil
-        }
-
-        let username = NSUserName()
-        let derivedDataPath = libraryDirectory
-            .appendingPathComponent("\(username)/\(directory.path)")
-
-        print(
-            "--- FILE --- : ", derivedDataPath.path(), "\n",
-            "--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path()).description.uppercased()
-        )
-
-        return derivedDataPath
-    }
 }
 
 private extension DirectoryPath {
-    var path: String {
+    /// Directory specific path.
+    private var path: String {
         switch self {
         case .derivedData:
             return "Library/Developer/Xcode/DerivedData"
@@ -106,5 +94,26 @@ private extension DirectoryPath {
         case .test:
             return "Library/Developer/Xcode/Test"
         }
+    }
+
+    var directoryPath: String? {
+        let fileManager = FileManager.default
+        // Get root user directory
+        guard let libraryDirectory = fileManager.urls(for: .userDirectory, in: .localDomainMask).first else {
+            return nil
+        }
+
+        let username = NSUserName()
+        let derivedDataPath = libraryDirectory
+            .appendingPathComponent("\(username)/\(path)")
+
+        print(
+            "--- PATH --- : ", derivedDataPath.path(),
+            "\n--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path())
+                .description
+                .uppercased()
+        )
+
+        return derivedDataPath.path()
     }
 }
