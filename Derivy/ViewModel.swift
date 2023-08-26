@@ -26,8 +26,12 @@ final class ViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .sink(receiveCompletion: { _ in
                 // Do Nothing for now.
-            }, receiveValue: { status in
-                // do something with status
+            }, receiveValue: { [weak self] status in
+                guard let self else {
+                    return
+                }
+
+                self.permissionStatus = status
             })
     }
 

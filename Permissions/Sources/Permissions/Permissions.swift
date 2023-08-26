@@ -33,7 +33,7 @@ public final class Permissions {
     private func createShouldAskForPermissionSubject() -> CurrentValueSubject<Bool, Never> {
         guard let statusRawValue = userDefault.string(forKey: .fullDiskPermissionStatusKey),
               let status = Status(rawValue: statusRawValue) else {
-            return .init(false)
+            return .init(true)
         }
 
         return .init(status != .granted)
