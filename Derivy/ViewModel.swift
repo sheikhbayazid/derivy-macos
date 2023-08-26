@@ -29,12 +29,14 @@ final class ViewModel: ObservableObject {
         setupListeners()
     }
 
+    deinit {
+        stopListeners()
+    }
+
     func requestFullDiskPermission() {
         authentication.requestFullDiskAccess()
             .receive(on: RunLoop.main)
-            .sink(receiveCompletion: { _ in
-                // Do Nothing for now.
-            }, receiveValue: { [weak self] status in
+            .sink(receiveValue: { [weak self] status in
                 guard let self else {
                     return
                 }
@@ -45,7 +47,7 @@ final class ViewModel: ObservableObject {
     }
 
     func deleteDerivedData() {
-        directory.deleteDirectory(at: .test)
+        directory.deleteDirectory(at: derivedDataDirectoryPath)
             .receive(on: RunLoop.main)
             .sink { completion in
                 if case .failure = completion {
@@ -87,6 +89,11 @@ final class ViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
+    }
+
+    private func stopListeners() {
+        cancellables.forEach { $0.cancel() }
+        directory.stopMonitoring()
     }
 
     private func handleXcodeDirectoryUpdate() {
