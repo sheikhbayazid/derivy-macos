@@ -3,6 +3,7 @@ import Foundation
 
 public enum DirectoryPath {
     case derivedData
+    case xcode
     case test
 }
 
@@ -12,24 +13,28 @@ public enum DirectoryError: Error {
 
 public final class Directory {
     private let fileManager = FileManager.default
+    private var fileMonitor: DispatchSourceFileSystemObject?
 
     public init() { }
 
     public func fileExists(at directory: DirectoryPath) -> Bool {
-        fileManager.fileExists(atPath: directory.path)
+        guard let directoryPath = getUserPathURL(directory)?.path() else {
+            return false
+        }
+        return fileManager.fileExists(atPath: directoryPath)
     }
 
     public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Bool, Error> {
-        guard let directoryPath = getUserPathURL(directory)?.path(),
-              fileManager.fileExists(atPath: directoryPath) else {
+        guard let userDirectoryPath = getUserPathURL(directory)?.path(),
+              fileManager.fileExists(atPath: userDirectoryPath) else {
             return Fail(error: DirectoryError.pathDoesNotExists).eraseToAnyPublisher()
         }
 
         do {
-            try fileManager.removeItem(atPath: directoryPath)
+            try fileManager.removeItem(atPath: userDirectoryPath)
             print(
-                "--- DELETED --- : ", directoryPath, "\n",
-                "--- EXISTS --- :", fileManager.fileExists(atPath: directoryPath).description.uppercased()
+                "--- DELETED --- : ", userDirectoryPath, "\n",
+                "--- EXISTS --- :", fileManager.fileExists(atPath: userDirectoryPath).description.uppercased()
             )
 
             return Just(true)
@@ -40,7 +45,37 @@ public final class Directory {
         }
     }
 
-    func getUserPathURL(_ directory: DirectoryPath) -> URL? {
+    public func startObserving(directory: DirectoryPath, completion: @escaping () -> Void) {
+        guard let userDirectoryPath = getUserPathURL(directory)?.path() else {
+                print("Invalid path")
+                return
+        }
+
+        let fileDescriptor = open(userDirectoryPath, O_EVTONLY)
+        guard fileDescriptor != -1 else {
+            print("Error opening directory for monitoring")
+            return
+        }
+
+        fileMonitor = DispatchSource.makeFileSystemObjectSource(fileDescriptor: fileDescriptor, eventMask: [.write, .delete], queue: DispatchQueue.global())
+
+        fileMonitor?.setEventHandler {
+            completion()
+        }
+
+        fileMonitor?.setCancelHandler { [weak self] in
+            close(fileDescriptor)
+            self?.fileMonitor = nil
+        }
+
+        fileMonitor?.resume()
+    }
+
+    func stopMonitoring() {
+        fileMonitor?.cancel()
+    }
+
+    private func getUserPathURL(_ directory: DirectoryPath) -> URL? {
         // Get root user directory
         guard let libraryDirectory = fileManager.urls(for: .userDirectory, in: .localDomainMask).first else {
             return nil
@@ -64,6 +99,9 @@ private extension DirectoryPath {
         switch self {
         case .derivedData:
             return "Library/Developer/Xcode/DerivedData"
+
+        case .xcode:
+            return "Library/Developer/Xcode"
 
         case .test:
             return "Library/Developer/Xcode/Test"

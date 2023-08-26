@@ -21,8 +21,18 @@ final class ViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
+    @Published var isDeriveDataDirectoryExisits: Bool
+
+
     init() {
+        isDeriveDataDirectoryExisits = directory.fileExists(at: .test)
+
         listenToPublishers()
+    }
+
+    func handleOnAppear() {
+        isDeriveDataDirectoryExisits = directory.fileExists(at: .test)
+        print("CAAAAAAAAALD")
     }
 
     func requestFullDiskPermission() {
@@ -69,6 +79,12 @@ final class ViewModel: ObservableObject {
         permissions.shouldAskForPermission
             .receive(on: RunLoop.main)
             .assign(to: &$shouldAskForPermission)
+
+        directory.startObserving(directory: .xcode) { [weak self] in
+            DispatchQueue.main.async {
+                self?.handleOnAppear()
+            }
+        }
     }
 }
 
