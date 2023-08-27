@@ -15,11 +15,11 @@ public final class Directory {
 
     public init() { }
 
-    public func fileExists(at directory: DirectoryPath) -> Bool {
+    public func isDeletableFile(at directory: DirectoryPath) -> Bool {
         guard let directoryPath = directory.directoryPath else {
             return false
         }
-        return fileManager.fileExists(atPath: directoryPath)
+        return fileManager.isDeletableFile(atPath: directoryPath)
     }
 
     public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Void, Error> {
@@ -75,5 +75,15 @@ public final class Directory {
 
     public func stopMonitoring() {
         fileMonitor?.cancel()
+    }
+
+    // MARK: - Private -
+
+    private func fileExists(at directory: DirectoryPath) -> Bool {
+        guard let directoryPath = directory.directoryPath else {
+            return false
+        }
+
+        return fileManager.fileExists(atPath: directoryPath)
     }
 }

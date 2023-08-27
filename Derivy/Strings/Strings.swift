@@ -10,6 +10,8 @@ import Foundation
 
 enum Strings {
     enum Button {
+        static let allowPermission = "Allow Permission"
+        static let deleteDerivedData = "Delete Derived Data"
         static let quit = "Quit"
     }
     enum SystemImage {
@@ -18,9 +20,10 @@ enum Strings {
     enum Text {
         static let derivy = "Derivy"
 
-        static let deleteDerivedData = "Delete Derived Data"
         static let derivedDataHasBeenDeleted = "Derived Data has been deleted ☑️"
         static let derivedDataDoesNotExist = "No Derived Data found"
         static let couldNotDeleteDerivedData = "Could not delete Derived Data ⚠️"
+        static let permissionMissing = "Permission missing ⚠️"
+        static let allowPermissionDescription = "Please allow permission in-order to delete Derived Data!"
     }
 }

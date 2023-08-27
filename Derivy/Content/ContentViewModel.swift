@@ -6,29 +6,47 @@
 //  Copyright © 2023 Sheikh Bayazid. All rights reserved.
 //
 
+import Authentication
 import Combine
 import Directory
 import SwiftUI
 
 final class ContentViewModel: ObservableObject {
+    private let authentication = Authentication()
     private let directory = Directory()
 
+    @Published var observer: NSKeyValueObservation?
     @Published private(set) var errorMessage: String?
 
-    @Published private(set) var isDeriveDataDirectoryExist: Bool
+    @Published private(set) var shouldAskForPermission = false
+    @Published private(set) var isDerivedDataDeletable: Bool
     @Published private(set) var showIsDeletedDerivedData: Bool = false
 
-    private let derivedDataDirectoryPath: DirectoryPath = .derivedData
+    private let derivedDataDirectoryPath: DirectoryPath = .test
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
+        isDerivedDataDeletable = directory.isDeletableFile(at: derivedDataDirectoryPath)
 
-        setupListener()
+        setupListeners()
     }
 
     deinit {
         stopListeners()
+    }
+
+    func requestFullDiskPermission() {
+        authentication.requestFullDiskAccess()
+            .receive(on: RunLoop.main)
+            .sink(receiveValue: { [weak self] status in
+                guard let self else {
+                    return
+                }
+
+                self.shouldAskForPermission = status != .authorized
+                self.observedXcodeDirectory()
+            })
+            .store(in: &cancellables)
     }
 
     func deleteDerivedData() {
@@ -52,12 +70,20 @@ final class ContentViewModel: ObservableObject {
         }
     }
 
-    private func setupListener() {
+    private func setupListeners() {
+        authentication.shouldAskForPermission
+            .receive(on: RunLoop.main)
+            .assign(to: &$shouldAskForPermission)
+
+        observedXcodeDirectory()
+    }
+
+    private func observedXcodeDirectory() {
         directory.startObserving(atPath: .xcode)
             .receive(on: RunLoop.main)
             .sink { completion in
                 if case let .failure(error) = completion {
-                    debugPrint(error.localizedDescription)
+                    debugPrint(error)
                 }
             } receiveValue: { [weak self] in
                 self?.handleXcodeDirectoryUpdate()
@@ -77,7 +103,7 @@ final class ContentViewModel: ObservableObject {
     }
 
     private func handleXcodeDirectoryUpdate() {
-        isDeriveDataDirectoryExist = directory.fileExists(at: derivedDataDirectoryPath)
+        isDerivedDataDeletable = directory.isDeletableFile(at: derivedDataDirectoryPath)
     }
 
     private func setErrorMessage(_ message: String) {

@@ -22,7 +22,10 @@ public class Authentication {
 
     public func requestFullDiskAccess() -> AnyPublisher<AuthenticationStatus, Never> {
         if PermissionsKit.authorizationStatus(for: .fullDiskAccess) == .authorized {
-            return Just(AuthenticationStatus.authorized)
+            let status = AuthenticationStatus.authorized
+            updateStatus(status)
+
+            return Just(status)
                 .setFailureType(to: Never.self)
                 .eraseToAnyPublisher()
         }
@@ -31,7 +34,7 @@ public class Authentication {
             PermissionsKit.requestAuthorization(for: .fullDiskAccess) { [weak self] authStatus in
                 let status = authStatus.status
 
-                self?.saveStatus(status)
+                self?.updateStatus(status)
                 promise(.success(status))
             }
         }
@@ -48,7 +51,7 @@ public class Authentication {
         return .init(status != .authorized)
     }
 
-    private func saveStatus(_ status: AuthenticationStatus) {
+    private func updateStatus(_ status: AuthenticationStatus) {
         userDefault.set(status.rawValue, forKey: fullDiskPermissionStatusKey)
         shouldAskForPermissionSubject.send(status != .authorized)
     }
