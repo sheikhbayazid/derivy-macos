@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "791A4B85-9452-4B85-8956-A76D7BDA6F1D",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Directory",
+        "identifier" : "DirectoryTests",
+        "name" : "DirectoryTests"
+      }
+    }
+  ],
+  "version" : 1
+}

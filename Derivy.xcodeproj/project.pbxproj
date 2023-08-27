@@ -26,6 +26,7 @@
 		4016FD2D2A997F89004B74F4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4016FD2F2A997F89004B74F4 /* Derivy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Derivy.entitlements; sourceTree = "<group>"; };
 		40B14EF92A9AB1BA003663B0 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
+		40B14EFB2A9B3EAB003663B0 /* DerivyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DerivyTests.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,6 +51,7 @@
 		4016FD1A2A997F87004B74F4 = {
 			isa = PBXGroup;
 			children = (
+				40B14EFB2A9B3EAB003663B0 /* DerivyTests.xctestplan */,
 				401093802A998EC500654EB5 /* Directory */,
 				4016FD252A997F87004B74F4 /* Derivy */,
 				4016FD242A997F87004B74F4 /* Products */,
