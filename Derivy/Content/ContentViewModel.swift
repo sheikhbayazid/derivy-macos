@@ -38,14 +38,8 @@ final class ContentViewModel: ObservableObject {
                 if case .failure = completion {
                     self?.setErrorMessage(Strings.Text.couldNotDeleteDerivedData)
                 }
-            } receiveValue: { [weak self] success in
-                guard let self else {
-                    return
-                }
-
-                self.showIsDeletedDerivedData = true
-                self.removeErrorMessage()
-                self.resetIsDeletedShowDerivedData(after: 5)
+            } receiveValue: { [weak self] in
+                self?.handleDeletedDerivedData()
             }
             .store(in: &cancellables)
     }
@@ -74,6 +68,12 @@ final class ContentViewModel: ObservableObject {
     private func stopListeners() {
         cancellables.forEach { $0.cancel() }
         directory.stopMonitoring()
+    }
+
+    private func handleDeletedDerivedData() {
+        self.showIsDeletedDerivedData = true
+        self.removeErrorMessage()
+        self.resetIsDeletedShowDerivedData(after: 5)
     }
 
     private func handleXcodeDirectoryUpdate() {

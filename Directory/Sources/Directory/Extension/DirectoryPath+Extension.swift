@@ -36,9 +36,7 @@ extension DirectoryPath {
 
         print(
             "--- PATH --- : ", derivedDataPath.path(),
-            "\n--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path())
-                .description
-                .uppercased()
+            "\n--- EXISTS --- :", fileManager.fileExists(atPath: derivedDataPath.path()).description.uppercased()
         )
 
         return derivedDataPath.path()

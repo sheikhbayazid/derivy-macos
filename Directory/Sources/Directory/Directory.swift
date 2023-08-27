@@ -22,8 +22,8 @@ public final class Directory {
         return fileManager.fileExists(atPath: directoryPath)
     }
 
-    public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Bool, Error> {
-        guard let directoryPath = directory.directoryPath, fileManager.fileExists(atPath: directoryPath) else {
+    public func deleteDirectory(at directory: DirectoryPath) -> AnyPublisher<Void, Error> {
+        guard let directoryPath = directory.directoryPath, fileExists(at: directory) else {
             return Fail(error: DirectoryError.invalidPath).eraseToAnyPublisher()
         }
 
@@ -31,10 +31,10 @@ public final class Directory {
             try fileManager.removeItem(atPath: directoryPath)
             print(
                 "--- DELETED --- : ", directoryPath,
-                "\n--- EXISTS --- :", fileManager.fileExists(atPath: directoryPath).description.uppercased()
+                "\n--- EXISTS --- :", fileExists(at: directory).description.uppercased()
             )
 
-            return Just(true)
+            return Just(Void())
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         } catch {
