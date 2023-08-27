@@ -54,8 +54,8 @@
 		4016FD1A2A997F87004B74F4 = {
 			isa = PBXGroup;
 			children = (
-				40D64C6B2A9BCED700F995FA /* Authentication */,
 				40B14EFB2A9B3EAB003663B0 /* DerivyTests.xctestplan */,
+				40D64C6B2A9BCED700F995FA /* Authentication */,
 				401093802A998EC500654EB5 /* Directory */,
 				4016FD252A997F87004B74F4 /* Derivy */,
 				4016FD242A997F87004B74F4 /* Products */,
