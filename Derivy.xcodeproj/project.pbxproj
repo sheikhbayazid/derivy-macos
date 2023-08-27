@@ -14,6 +14,7 @@
 		4016FD2B2A997F89004B74F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4016FD2A2A997F89004B74F4 /* Assets.xcassets */; };
 		4016FD2E2A997F89004B74F4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4016FD2D2A997F89004B74F4 /* Preview Assets.xcassets */; };
 		40B14EFA2A9AB1BA003663B0 /* Strings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B14EF92A9AB1BA003663B0 /* Strings.swift */; };
+		40D64C6D2A9BCFB400F995FA /* Authentication in Frameworks */ = {isa = PBXBuildFile; productRef = 40D64C6C2A9BCFB400F995FA /* Authentication */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		4016FD2F2A997F89004B74F4 /* Derivy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Derivy.entitlements; sourceTree = "<group>"; };
 		40B14EF92A9AB1BA003663B0 /* Strings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Strings.swift; sourceTree = "<group>"; };
 		40B14EFB2A9B3EAB003663B0 /* DerivyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = DerivyTests.xctestplan; sourceTree = "<group>"; };
+		40D64C6B2A9BCED700F995FA /* Authentication */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Authentication; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40D64C6D2A9BCFB400F995FA /* Authentication in Frameworks */,
 				401093822A99945C00654EB5 /* Directory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,6 +54,7 @@
 		4016FD1A2A997F87004B74F4 = {
 			isa = PBXGroup;
 			children = (
+				40D64C6B2A9BCED700F995FA /* Authentication */,
 				40B14EFB2A9B3EAB003663B0 /* DerivyTests.xctestplan */,
 				401093802A998EC500654EB5 /* Directory */,
 				4016FD252A997F87004B74F4 /* Derivy */,
@@ -131,6 +135,7 @@
 			name = Derivy;
 			packageProductDependencies = (
 				401093812A99945C00654EB5 /* Directory */,
+				40D64C6C2A9BCFB400F995FA /* Authentication */,
 			);
 			productName = Derivy;
 			productReference = 4016FD232A997F87004B74F4 /* Derivy.app */;
@@ -397,6 +402,10 @@
 		401093812A99945C00654EB5 /* Directory */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Directory;
+		};
+		40D64C6C2A9BCFB400F995FA /* Authentication */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Authentication;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
